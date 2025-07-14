@@ -16,7 +16,8 @@ These experiments were run on A40 RunPod instances.
 11. pip install -r requirements.txt
     
 The resulting folder structure should be:
-workspace/
+
+    workspace/
     |
     |-- ARC_gym/
     |-- OODGenARC-AGI/
