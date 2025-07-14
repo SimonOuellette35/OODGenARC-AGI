@@ -25,4 +25,11 @@ The resulting folder structure should be:
              |-- AmotizedDSL/
              |-- ARC-AGI-2/
 
-            
+### Model checkpoint
+You can train the model by following these instructions:
+1. Generate training data by calling: python generate_toy_data.py (this will create training.json and validation.json)
+2. Train the model by calling: python3 train_gridcoder.py (this will output gridcoder2.pth)
+
+Or you can download the pre-trained checkpoint for these experiments: https://drive.google.com/file/d/18-9MeY9mw4JyZ1wVBJkHyMwyGBgDamvn/view?usp=sharing
+
+You should name the checkpoint file: gridcoder2.pth
