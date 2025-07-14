@@ -1,7 +1,7 @@
 import json
 from tqdm import tqdm
 #from datasets.toy_data_generator import generate_data
-from datasets.data_generator import generate as generate_data
+from datasets.data_generator import generate_data
 from model.transformer_model import StandardTransformerModel
 import ARC_gym.utils.tokenization as tok
 import numpy as np
@@ -29,7 +29,7 @@ def split_XY(sequence):
     """
     result = []
     current_sublist = []
-
+    
     for num in sequence:
         current_sublist.append(num)
         if num == 2:

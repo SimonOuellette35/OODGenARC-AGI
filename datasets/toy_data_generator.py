@@ -274,7 +274,7 @@ def generate_data(model, ood=False, specified_task=None, num_samples=1000, k=1):
             grid_sequence = np.concatenate((tokenized_input_grid, tokenized_output_grid))
 
             if k == 1:
-                combined_input.append(list(grid_sequence))
+                combined_input.append(task_input_sequences)
             else:
                 task_input_sequences.append(grid_sequence)
 

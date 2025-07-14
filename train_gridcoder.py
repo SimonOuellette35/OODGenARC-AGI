@@ -10,9 +10,9 @@ import json
 import ARC_gym.utils.tokenization as tok
 import ARC_gym.utils.visualization as viz
 import AmotizedDSL.DSL as DSL
-from AmotizedDSL.prog_utils import ProgUtils
+from utils.prog_utils import ProgUtils
 from state_tokenizer import StateTokenizer
-import AmotizedDSL.program_interpreter as pi
+import search.program_interpreter as pi
 import copy
 import random
 
@@ -39,10 +39,18 @@ DATA_MAX_SEQ_LENGTH = 931  # there are two types of MAX_SEQ_LENGTHs.. the one in
                            # than 30x30...
 
 print("DSL_size = ", DSL_size)
+model = StandardTransformerModel.instantiate_from_config_file('gridcoder_cfg.json')
 device = "cuda"
-model = StandardTransformerModel.instantiate_from_config_file('gridcoder_cfg.json', device=device)
 
-# ========================================================= Datasets =====================================================
+# ========================================================= Toy problem data generation =====================================================
+
+# We generate 3 types of input grid to output grid transformations:
+# 1. vmirror + change non-black pixels to yellow
+# 2. hmirror + change non-black pixels to yellow
+# 3. shift pixels to the right
+
+# The goal of this datasets is that the model must learn to classify which type of operation was applied between
+# the two input grids.
 
 def load_data(filename='training.json', max_samples=None):
     X_train = []
@@ -100,7 +108,7 @@ scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=100,
                              verbose=True, min_lr=1e-5)
 
 if RESUME_MODEL:
-    checkpoint = torch.load('gridcoder2.pth')
+    checkpoint = torch.load('gridcoder_intermediate.pth')
     model.load_state_dict(checkpoint['model_state_dict'])
 
 if RESUME_TRAINING:
@@ -129,7 +137,6 @@ def generate_batch_programs(model, batch_output, target_grids, target_programs):
     tokenized_batch_output = []
     batch_full_intermediate_state = batch_output
     tokenized_targets = []
-       
     for batch_idx in range(len(batch_output)):
         current_tokenized_states = []
         
@@ -144,11 +151,7 @@ def generate_batch_programs(model, batch_output, target_grids, target_programs):
 
             tmp = StateTokenizer.pad(tmp)
             current_tokenized_states.append(tmp)
-
-        if len(current_tokenized_states) == 0:
-            print("Starting with empty tokenized states!")
-            exit(-1)
-            
+           
         tokenized_batch_output.append(current_tokenized_states)
 
     # decoding idx is now offset by the initial number of intermediate states.
@@ -172,7 +175,8 @@ def generate_batch_programs(model, batch_output, target_grids, target_programs):
 
         # Execute the instruction sequence to get the next state
         with torch.no_grad():
-            tmp_batch_output = pi.execute_instruction_step_batch(target_programs[:, prog_step_idx], batch_full_intermediate_state, DSL)            
+            tmp_batch_output = pi.execute_instruction_step_batch(target_programs[:, prog_step_idx], batch_full_intermediate_state, DSL)
+
             tmp_tokenized_batch_output = state_tokenizer.tokenize_batch(tmp_batch_output)
 
         for batch_idx in range(len(tmp_batch_output)):
@@ -193,14 +197,6 @@ def generate_batch_programs(model, batch_output, target_grids, target_programs):
                 # Filter out the element at index state_idx_to_del from tokenized_batch_output[batch_idx]
                 if state_idx_to_del < len(tokenized_batch_output[batch_idx]):
                     tokenized_batch_output[batch_idx].pop(state_idx_to_del)
-                else:
-                    print(f"THERE WAS NO {state_idx_to_del} to delete out of {len(tokenized_batch_output[batch_idx])} items in memory!")
-                    exit(0)
-                    
-                if len(tokenized_batch_output[batch_idx]) == 0:
-                    print("WE OVER DELETED!")
-                    exit(-1)
-
             elif tmp_tokenized_batch_output[batch_idx][0] == 0 and len(tmp_tokenized_batch_output[batch_idx]) == 1:
                 # program complete, new state was None
                 pass
@@ -210,11 +206,6 @@ def generate_batch_programs(model, batch_output, target_grids, target_programs):
         # must take tokenized batch output as input, not the raw variables...
         encoder_memory = model.get_encoder_memory(tokenized_batch_output, tokenized_targets)
 
-        if encoder_memory is None:
-            print("model.get_encoder_memroy() returned None!")
-            print(f"input was: {tokenized_batch_output}")
-            exit(-1)
-            
         prog_step_idx += 1
 
     return predicted_sequences
@@ -329,6 +320,6 @@ for epoch in range(num_epochs):
         'optimizer_state_dict': optimizer.state_dict(),
         'scheduler_state_dict': scheduler.state_dict()
     }
-    torch.save(checkpoint, 'gridcoder2.pth')
+    torch.save(checkpoint, 'gridcoder_intermediate.pth')
     
     print(f"Epoch {epoch+1}, Loss: {total_loss/len(train_loader):.6f}, Train. acc.: {acc}")
