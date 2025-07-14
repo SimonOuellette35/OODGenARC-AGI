@@ -36,12 +36,12 @@ You should name the checkpoint file: gridcoder2.pth
 
 ### Generating the results
  
-   python test_gridcoder.py --dataset ood_data1.json
-   python test_gridcoder.py --dataset ood_data2.json
-   python test_gridcoder.py --dataset ood_data3.json
-   python test_gridcoder.py --dataset ood_data4.json
-   python test_gridcoder.py --dataset ood_data5.json
-   python test_gridcoder.py --dataset ood_data6.json
-   python test_gridcoder.py --dataset ood_data7.json
+    python test_gridcoder.py --dataset ood_data1.json
+    python test_gridcoder.py --dataset ood_data2.json
+    python test_gridcoder.py --dataset ood_data3.json
+    python test_gridcoder.py --dataset ood_data4.json
+    python test_gridcoder.py --dataset ood_data5.json
+    python test_gridcoder.py --dataset ood_data6.json
+    python test_gridcoder.py --dataset ood_data7.json
    
 Each live above gives the success rate for each OOD Task from 1 to 7 inclusively.
