@@ -1,8 +1,28 @@
 import json
 from datasets.toy_data_generator import generate_data
 from model.transformer_model import StandardTransformerModel
+import numpy as np
 
-
+def numpy_to_python(obj):
+    """Convert numpy types to native Python types recursively."""
+    if isinstance(obj, np.ndarray):
+        return numpy_to_python(obj.tolist())
+    elif isinstance(obj, (np.int_, np.intc, np.intp, np.int8, np.int16, np.int32,
+                          np.int64, np.uint8, np.uint16, np.uint32, np.uint64)):
+        return int(obj)
+    elif isinstance(obj, (np.float_, np.float16, np.float32, np.float64)):
+        return float(obj)
+    elif isinstance(obj, (np.bool_)):
+        return bool(obj)
+    elif isinstance(obj, (np.complex_, np.complex64, np.complex128)):
+        return complex(obj)
+    elif isinstance(obj, list) or isinstance(obj, tuple):
+        return [numpy_to_python(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: numpy_to_python(value) for key, value in obj.items()}
+    else:
+        return obj
+        
 trainN = 200000
 valN = 1000
 model = StandardTransformerModel.instantiate_from_config_file('gridcoder_cfg.json')
@@ -16,7 +36,7 @@ input_sequences, programs = generate_data(model, num_samples=trainN)
 training_data = []
 for i in range(trainN):
     sample = {
-        "input_sequence": input_sequences[i].tolist(),
+        "input_sequence": numpy_to_python(input_sequences[i]),
         "prog": programs[i]
     }
     training_data.append(sample)
@@ -35,7 +55,7 @@ input_sequences, programs = generate_data(model, num_samples=valN)
 validation_data = []
 for i in range(valN):
     sample = {
-        "input_sequence": input_sequences[i].tolist(),
+        "input_sequence": numpy_to_python(input_sequences[i]),
         "prog": programs[i]
     }
     validation_data.append(sample)
