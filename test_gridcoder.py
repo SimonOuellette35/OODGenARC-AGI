@@ -1,4 +1,6 @@
 import argparse
+import os
+import sys
 import torch
 import json
 import numpy as np
@@ -18,6 +20,7 @@ def parse_arguments():
     return args
 
 args = parse_arguments()
+
 
 import AmotizedDSL.DSL as DSL
 from datasets.toy_dataset import ToyDataset
@@ -66,7 +69,7 @@ X_data, Y_data = load_data(100, args.dataset)
 dataset_val = TensorDataset(X_data, Y_data)
 eval_loader = DataLoader(dataset_val, batch_size=1)
 
-# ================================================================== Model ==================================================================
+# ================================================================== Heuristic ==================================================================
 
 # Set deterministic seed for reproducibility
 DET_SEED = 123
@@ -83,10 +86,15 @@ state_tokenizer = StateTokenizer()
 model = StandardTransformerModel.instantiate_from_config_file('gridcoder_cfg.json')
 device = "cuda"
 
+checkpoint = torch.load('gridcoder2.pth')
+
+model.load_state_dict(checkpoint['model_state_dict'])
 model = model.to(device)
 model.eval()
 
 # ================================================================== Tasks ==================================================================
+
+device = 'cuda'
 
 def display_program_sequence(program):
     # Start from the current node
@@ -137,42 +145,41 @@ def process_task(model, X, Y):
     
     return success, program
 
-
 for task_idx, eval_task in enumerate(eval_loader):
 
-print("Task description/class ID: ", eval_task[1].cpu().data.numpy()[0][1])
+    print("Task description/class ID: ", eval_task[1].cpu().data.numpy()[0][1])
 
-def split_XY(sequence):
-    """
-    Split a sequence into sub-lists, where each sub-list is terminated by the occurrence of integer 2.
-    
-    Args:
-        sequence: A list of integers
+    def split_XY(sequence):
+        """
+        Split a sequence into sub-lists, where each sub-list is terminated by the occurrence of integer 2.
         
-    Returns:
-        A list of sub-lists, where each sub-list ends with the integer 2
-    """
-    result = []
-    current_sublist = []
-    
-    for num in sequence:
-        current_sublist.append(num)
-        if num == 2:
+        Args:
+            sequence: A list of integers
+            
+        Returns:
+            A list of sub-lists, where each sub-list ends with the integer 2
+        """
+        result = []
+        current_sublist = []
+        
+        for num in sequence:
+            current_sublist.append(num)
+            if num == 2:
+                result.append(current_sublist)
+                current_sublist = []
+        
+        # Handle case where the sequence doesn't end with 2
+        if current_sublist:
             result.append(current_sublist)
-            current_sublist = []
+            
+        return result
+
+    if task_idx < args.skip:
+        continue
+
+    grids = split_XY(eval_task[0][0].cpu().data.numpy())
     
-    # Handle case where the sequence doesn't end with 2
-    if current_sublist:
-        result.append(current_sublist)
-        
-    return result
+    process_task(model, grids[0], grids[1])
 
-if task_idx < args.skip:
-    continue
-
-grids = split_XY(eval_task[0][0].cpu().data.numpy())
-
-process_task(model, grids[0], grids[1])
-
-# TODO: temporary, to simplify debugging.
-exit(0)
+    # TODO: temporary, to simplify debugging.
+    exit(0)

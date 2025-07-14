@@ -23,24 +23,22 @@ class StateTokenizer:
 
         self.vocab["SOS"] = 13
 
-        for i in range(10, 31): # integers 10-30 for the grid dimensions
-            self.vocab[str(i)] = i + 4
+        for i in range(31): # sizes 0-30
+            self.vocab[f"SIZE_{i}"] = i + 14
 
-        self.vocab["TRUE"] = 35
-        self.vocab["FALSE"] = 36
+        self.vocab["TRUE"] = 45
+        self.vocab["FALSE"] = 46
 
-        # negative values from -1 to -10
-        for i in range(1, 11):
-            self.vocab[str(-i)] = i + 36
-            
         # Type hints
         self.type_hints = {
             'GRID': 47,
             'GRID_LIST': 48,
-            'INT': 49,
-            'INT_LIST': 50,
-            'BOOL': 51,
-            'BOOL_LIST': 52
+            'DIM': 49,
+            'DIM_LIST': 50,
+            'COLOR': 51,
+            'COLOR_LIST': 52,
+            'BOOL': 53,
+            'BOOL_LIST': 54
         }
         self.vocab.update(self.type_hints) # Add type hints
 
@@ -104,7 +102,7 @@ class StateTokenizer:
                     tmp = self.tokenize(variable)
                     if tmp is None:
                         print(f"Warning: Could not tokenize variable of type {type(variable)}. Contents: {variable}")
-    
+                
                     tokenized_sequences.append(tmp)
             except Exception as e:
                 print(f"Error tokenizing batch element {i}: {e}")
@@ -119,6 +117,16 @@ class StateTokenizer:
         return tokenized_sequences
 
     def tokenize(self, variable):
+        # Convert PyTorch tensors to Python types
+        if torch.is_tensor(variable):
+            variable = variable.item() if variable.numel() == 1 else variable.tolist()
+        
+        if isinstance(variable, List) or isinstance(variable, list):
+            # Handle lists with tensor elements
+            for i in range(len(variable)):
+                if torch.is_tensor(variable[i]):
+                    variable[i] = variable[i].item() if variable[i].numel() == 1 else variable[i].tolist()
+        
         if isinstance(variable, DSL.Grid):
             # Reserve one space for the type hint token
             sequence = tok.tokenize_grid(variable.cells, max_length=StateTokenizer.MAX_SEQ_LENGTH-1)
@@ -144,6 +152,25 @@ class StateTokenizer:
             tokenized_grids = [self.type_hints["GRID_LIST"]] + [token for grid_tokens in tokenized_grids for token in grid_tokens] # flatten the list of lists
             return tokenized_grids
 
+        elif isinstance(variable, List) and len(variable) > 0 and hasattr(DSL, 'DIM') and type(variable[0]) == DSL.DIM:
+            tokenized_dims = []
+            for dim in variable:
+                tokenized_dims.append(int(dim) + 14)    # Renumbers these as DIM tokens
+
+            # Prepend DIM_LIST type hint
+            tokenized_dims = [self.type_hints["DIM_LIST"]] + tokenized_dims
+
+            return tokenized_dims
+        elif isinstance(variable, List) and len(variable) > 0 and hasattr(DSL, 'COLOR') and type(variable[0]) == DSL.COLOR:
+            tokenized_colors = []
+            for color in variable:
+                tokenized_colors.append(int(color) + 3)
+
+            # Prepend COLOR_LIST type hint
+            tokenized_colors = [self.type_hints["COLOR_LIST"]] + tokenized_colors
+
+            return tokenized_colors
+
         elif isinstance(variable, List) and (isinstance(variable[0], bool) or isinstance(variable[0], np.bool_)):
             tokenized_bools = []
             for b in variable:
@@ -157,32 +184,24 @@ class StateTokenizer:
 
             return tokenized_bools
 
+        elif isinstance(variable, List) and len(variable) > 0 and hasattr(DSL, 'DIM') and type(variable[0]) == DSL.DIM:
+            sequence = [self.type_hints["DIM_LIST"]] + [int(x) + 14 for x in variable]
+            return sequence
+
+        elif isinstance(variable, List) and len(variable) > 0 and hasattr(DSL, 'COLOR') and type(variable[0]) == DSL.COLOR:
+            sequence = [self.type_hints["COLOR_LIST"]] + [int(x) + 3 for x in variable]
+            return sequence
+
         elif isinstance(variable, List) and isinstance(variable[0], (int, np.int32, np.int64)):
-            sequence = [self.type_hints["INT"]]
-            for x in variable:
-                if str(x) not in self.vocab:
-                    print("==> ERROR: StateTokenizer vocab doesn't know about value: ", str(x))
-                    exit(-1)
-                
-                sequence.append(self.vocab[str(x)])
-
+            sequence = [self.type_hints["COLOR_LIST"]] + [int(x) + 3 for x in variable]
             return sequence
 
-        elif isinstance(variable, (int, np.integer)):
-            if str(variable) not in self.vocab:
-                print("==> ERROR: StateTokenizer vocab doesn't know about value: ", str(variable))
-                exit(-1)
-
-            sequence = [self.type_hints["INT"]] + [self.vocab[str(variable)]]
-
-            return sequence
-            
-        elif isinstance(variable, (bool, np.bool_)):
-            if variable:
-                sequence = [self.type_hints["BOOL"]] + [self.vocab["TRUE"]]
-            else:
-                sequence = [self.type_hints["BOOL"]] + [self.vocab["FALSE"]]
-            return sequence
+        # elif isinstance(variable, (bool, np.bool_)):
+        #     if variable:
+        #         sequence = [self.type_hints["BOOL"]] + [self.vocab["TRUE"]]
+        #     else:
+        #         sequence = [self.type_hints["BOOL"]] + [self.vocab["FALSE"]]
+        #     return sequence
 
         else:
             print("==> ERROR: unknown variable type for variable: ", variable)
