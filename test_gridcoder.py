@@ -140,38 +140,39 @@ def process_task(model, X, Y):
 
 for task_idx, eval_task in enumerate(eval_loader):
 
-    print("Task description/class ID: ", eval_task[1].cpu().data.numpy()[0][1])
+print("Task description/class ID: ", eval_task[1].cpu().data.numpy()[0][1])
 
-    def split_XY(sequence):
-        """
-        Split a sequence into sub-lists, where each sub-list is terminated by the occurrence of integer 2.
-        
-        Args:
-            sequence: A list of integers
-            
-        Returns:
-            A list of sub-lists, where each sub-list ends with the integer 2
-        """
-        result = []
-        current_sublist = []
-        
-        for num in sequence:
-            current_sublist.append(num)
-            if num == 2:
-                result.append(current_sublist)
-                current_sublist = []
-        
-        # Handle case where the sequence doesn't end with 2
-        if current_sublist:
-            result.append(current_sublist)
-            
-        return result
-
-    if task_idx < args.skip:
-        continue
-
-    grids = split_XY(eval_task[0][0].cpu().data.numpy())
+def split_XY(sequence):
+    """
+    Split a sequence into sub-lists, where each sub-list is terminated by the occurrence of integer 2.
     
-    process_task(model, grids[0], grids[1])
+    Args:
+        sequence: A list of integers
+        
+    Returns:
+        A list of sub-lists, where each sub-list ends with the integer 2
+    """
+    result = []
+    current_sublist = []
+    
+    for num in sequence:
+        current_sublist.append(num)
+        if num == 2:
+            result.append(current_sublist)
+            current_sublist = []
+    
+    # Handle case where the sequence doesn't end with 2
+    if current_sublist:
+        result.append(current_sublist)
+        
+    return result
 
-    # TODO: collect and display success rate
+if task_idx < args.skip:
+    continue
+
+grids = split_XY(eval_task[0][0].cpu().data.numpy())
+
+process_task(model, grids[0], grids[1])
+
+# TODO: temporary, to simplify debugging.
+exit(0)
