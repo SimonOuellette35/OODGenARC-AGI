@@ -4,9 +4,9 @@
     "d_model": 256,
     "num_heads": 16,
     "num_layers": 4,
-    "input_vocab_size": 53,
-    "target_vocab_size": 55,
+    "input_vocab_size": 55,
+    "target_vocab_size": 45,
     "max_state_seq_length": 991,
     "max_instr_seq_length": 16,
-    "max_instr_steps": 16
+    "max_instr_steps": 15
 }
