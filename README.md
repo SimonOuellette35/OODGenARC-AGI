@@ -2,7 +2,7 @@
 
 These experiments were run on A40 RunPod instances.
 
-==> Steps to reproduce:
+### Setup
 1. clone this repo
 2. git clone https://github.com/SimonOuellette35/ARC_gym (tested on commit #f135ae35e01a27aaf4cec0bea4250d27c318e9f7)
 3. cd ARC_gym
