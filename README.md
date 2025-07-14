@@ -14,4 +14,14 @@ These experiments were run on A40 RunPod instances.
 9. cd ..
 10. git clone https://github.com/arcprize/ARC-AGI-2.git
 11. pip install -r requirements.txt
-12. 
+    
+The resulting folder structure should be:
+workspace/
+    |
+    |-- ARC_gym/
+    |-- OODGenARC-AGI/
+             |
+             |-- AmotizedDSL/
+             |-- ARC-AGI-2/
+
+            
