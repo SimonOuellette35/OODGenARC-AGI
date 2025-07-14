@@ -12,7 +12,6 @@ VERBOSE = True
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Command line arguments for GridCoder")
 
-    parser.add_argument("--task", type=str, help="Task to load for eval or training ARC set: the name of the filename for the task")
     parser.add_argument("--dataset", type=str, default="eval", help="Task to load ('synthetic' for synthetically generated tasks, 'eval' for ARC evaluation dataset, 'train' for ARC training dataset)")
     parser.add_argument("--time_budget", type=int, default=DEFAULT_TIMEOUT, help="Time budget per task in seconds")
     parser.add_argument("--skip", type=int, default=-1, help="Skip N tasks")
@@ -29,8 +28,6 @@ from torch.utils.data import DataLoader
 from model.transformer_model import StandardTransformerModel
 import ARC_gym.utils.tokenization as tok
 import search.tree_search as p_star
-#import search.tree_search_MCD as p_star
-import utils.grid_utils as g
 from AmotizedDSL.prog_utils import ProgUtils
 from state_tokenizer import StateTokenizer
 
@@ -67,24 +64,10 @@ def load_data(num_samples=1000, filename='training.json'):
     
     return X_train, Y_train
 
-if args.task == 'Kaggle':
-    # Load and parse the JSON file
-    with open('/kaggle/input/arc-prize-2024/arc-agi_test_challenges.json', 'r') as f:
-    #with open('/kaggle/input/arc-prize-2024/arc-agi_evaluation_challenges.json', 'r') as f:
-        data = json.load(f)
-    
-        # Store each task object in a list
-        test_tasks = []
-        for task_id, task_data in data.items():
-            test_tasks.append({task_id: task_data})
-
-        print("Loaded %i test tasks!" % len(test_tasks))
-
-if args.task == 'alpha_POC':
-    ds = ToyDataset()
-    X_data, Y_data = load_data(100, args.dataset)
-    dataset_val = TensorDataset(X_data, Y_data)
-    eval_loader = DataLoader(dataset_val, batch_size=1)
+ds = ToyDataset()
+X_data, Y_data = load_data(100, args.dataset)
+dataset_val = TensorDataset(X_data, Y_data)
+eval_loader = DataLoader(dataset_val, batch_size=1)
 
 # ================================================================== Heuristic ==================================================================
 
