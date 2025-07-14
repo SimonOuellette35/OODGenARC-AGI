@@ -14,7 +14,7 @@ def parse_arguments():
 
     parser.add_argument("--dataset", type=str, default="eval", help="Task to load ('synthetic' for synthetically generated tasks, 'eval' for ARC evaluation dataset, 'train' for ARC training dataset)")
     parser.add_argument("--time_budget", type=int, default=DEFAULT_TIMEOUT, help="Time budget per task in seconds")
-    parser.add_argument("--skip", type=int, default=-1, help="Skip N tasks")
+    parser.add_argument("--skip", type=int, default=0, help="Skip N tasks")
      
     args = parser.parse_args()
     return args
@@ -147,9 +147,9 @@ def process_task(model, X, Y):
     
     return success, program
 
+success_rate = 0
+task_count = 0
 for task_idx, eval_task in enumerate(eval_loader):
-
-    print("Task description/class ID: ", eval_task[1].cpu().data.numpy()[0][1])
 
     def split_XY(sequence):
         """
@@ -181,7 +181,11 @@ for task_idx, eval_task in enumerate(eval_loader):
 
     grids = split_XY(eval_task[0][0].cpu().data.numpy())
     
-    process_task(model, grids[0], grids[1])
+    success, _ = process_task(model, grids[0], grids[1])
 
-    # TODO: temporary, to simplify debugging.
-    exit(0)
+    if success:
+        success_rate += 1
+
+    task_count += 1
+    
+print("==> Success rate = ", float(success_rate)/task_count)

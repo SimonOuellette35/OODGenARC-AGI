@@ -270,6 +270,8 @@ def select_node(root_node, max_tree_depth):
 
 
 def search(model, input_grids, target_grids, time_budget, max_iterations, max_tree_depth=MAX_TREE_DEPTH, verbose=False, device='cuda'):
+    global global_leaf_stats
+    
     '''
     Runs the tree search, looking for the program that can transform the input_grids into their target_grids.
 
@@ -288,7 +290,7 @@ def search(model, input_grids, target_grids, time_budget, max_iterations, max_tr
     '''
 
     start_time = time.time()
-
+    global_leaf_stats = []
     print("Task target grid: ", target_grids)
     
     root_node = selected_node = SearchTreeNode(input_grids, 0)
