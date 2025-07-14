@@ -13,4 +13,5 @@ These experiments were run on A40 RunPod instances.
 8. pip install -e .
 9. cd ..
 10. git clone https://github.com/arcprize/ARC-AGI-2.git
-11. 
+11. pip install -r requirements.txt
+12. 
