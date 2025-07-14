@@ -1,7 +1,6 @@
 import torch
 from state_tokenizer import StateTokenizer
 import numpy as np
-from AmotizedDSL.prog_utils import ProgUtils
 
 
 # this function starts from a given child node, and obtains all the parent nodes by walking
@@ -9,7 +8,7 @@ from AmotizedDSL.prog_utils import ProgUtils
 # any delete actions. This returns the sequence of states (as nodes) that are relevant at the
 # end of this partial program's execution. Useful for prepare_encoder_memory() and for
 # generate_program_state().
-def get_node_sequence(node, DSL_size, DSL):
+def get_node_sequence(node, DSL_size):
     node_sequence = []
     cur_node = node
     while cur_node.parent_node is not None:
@@ -24,8 +23,6 @@ def get_node_sequence(node, DSL_size, DSL):
     # state is the output of applying instruction 0, while it's instruction is the second
     # instruction to be executed, etc.
     
-    del_token_id = DSL.prim_indices['del'] + ProgUtils.NUM_SPECIAL_TOKENS
-
     # Process each node in sequence, checking for delete operations
     i = 0
     while i < len(node_sequence):
@@ -34,8 +31,8 @@ def get_node_sequence(node, DSL_size, DSL):
         if current_node.parent_node is not None:
             instr_seq = current_node.parent_node.instruction_seqs[current_node.instruction_idx]
             
-            # Check if it's a delete operation
-            if instr_seq[0] == 0 and instr_seq[1] == del_token_id:
+            # Check if it's a delete operation (starts with [0, 25])
+            if instr_seq[0] == 0 and instr_seq[1] == 29:
                 # Get the state index to delete from the next token in the sequence
                 state_idx_to_del = instr_seq[3]
                 state_idx_to_del -= DSL_size
@@ -56,7 +53,7 @@ def get_node_sequence(node, DSL_size, DSL):
     return node_sequence
 
 
-def prepare_encoder_memory(model, node, target_memory, state_tokenizer, DSL_size, DSL, device='cuda'):
+def prepare_encoder_memory(model, node, target_memory, state_tokenizer, DSL_size, device='cuda'):
     model.eval()
     with torch.no_grad():
 
@@ -73,7 +70,7 @@ def prepare_encoder_memory(model, node, target_memory, state_tokenizer, DSL_size
 
         node.encoder_memory = latent_state.cpu().data.numpy()
 
-        node_sequence = get_node_sequence(node, DSL_size, DSL)
+        node_sequence = get_node_sequence(node, DSL_size)
         
         print("==> Preparing encoder memory from state sequence:")
         enc_memories_torch = []
