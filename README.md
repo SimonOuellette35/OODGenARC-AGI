@@ -94,7 +94,7 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
     instead of del llm.llm_engine.model_executor around line 128
 ```
-9. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
+
 
 ### LLM+TTFT results
 1. in fine-tuning.py set the following parameter values:
@@ -174,10 +174,11 @@ At step 4, test-time fine-tuning is done from the fully trained local model, rat
 ```
 
 ### TTFT-no-augments results (the main TTFT result)
-1. python fine-tuning-ood.py to pretrain on the data
-2. Use fine-tuning-ttft-no-augments.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
-3. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
-4. python3 inference-no-augments.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
 
+Starting from the TTFT+augments setup, we must create modified versions of the fine-tuning.py and inference.py files to disable geometric augments. For this you can use the modified scripts found in this repo under the ttft/ folder. Move them to the arc24/scripts folder.
 
+* for Steps 1 and 2 (pretraining from scratch without augments on our own training data), use: ttft/fine-tuning-pretraining-from-scratch.py
+* for the TTFT steps, fine-tune using the script: ttft/fine-tuning-no-augments.py
+* for the inference steps, use the script: ttft/inference-no-augments.py
+  
 
