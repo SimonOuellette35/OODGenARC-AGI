@@ -119,18 +119,19 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
     eval_steps: int = 10
 ```   
-6. Run this modified fine-tuning.py to produce the task-specific lora adapters. You will have to repeat this for every task instance file! Though you'll probably want to proceed in batches to not run out of disk space from the generated LoRA adapters. To respect the 3-minute time budget, I suggest running this step for no more than 2 minutes 30 seconds each time.
-7. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=output/ttft-task1-sample1 --output_path=output/merged_task1_sample1
-8. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-00000000-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
-9. open the script grids_equal.py in this repo, and set ground_truth to the test output grid in ood_TTT_data1-00000000-test.json and attempts to the entire content of ood_TTT_data1-sample1-solution.json.
-10. Run the grids_equal.py script to find out if this attempt was a success or not.
+5. Run this modified fine-tuning.py to produce the task-specific lora adapters. You will have to repeat this for every task instance file! Though you'll probably want to proceed in batches to not run out of disk space from the generated LoRA adapters. To respect the 3-minute time budget, I suggest running this step for no more than 2 minutes 30 seconds each time.
+6. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=output/ttft-task1-sample1 --output_path=output/merged_task1_sample1
+7. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-00000000-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
+8. open the script grids_equal.py in this repo, and set ground_truth to the test output grid in ood_TTT_data1-00000000-test.json and attempts to the entire content of ood_TTT_data1-sample1-solution.json.
+9. Run the grids_equal.py script to find out if this attempt was a success or not.
 
 Note: Chances are you'll want to find a way to automate this entire process, but I didn't.
 
 ### LLM-no-TTFT results
-1. python fine-tuning.py to pretrain on the data
-2. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
-3. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
+Similar steps to the above, except:
+- skip steps 4 and 5, we don't fine-tune on tasks
+- step 6 becomes: python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=output/pretrained_model --output_path=output/merged_pretrained_model
+- step 7 becomes: python3 inference.py --model_path output/merged_pretrained_model --dataset ./ood_TTT_data1-00000000-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
 
 ### TTFT+augments results
 1. python fine-tuning-no-weights.py to pretrain on the data
