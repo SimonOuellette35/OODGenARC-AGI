@@ -180,6 +180,7 @@ Starting from the TTFT+augments setup, we must create modified versions of the f
 See the full list of steps in LLM+TTFT, but replace with the following:
 * for Steps 1 and 2 (pretraining from scratch without augments on our own training data), use: ttft/fine-tuning-pretraining-from-scratch.py
 * for the TTFT steps, fine-tune using the script: ttft/fine-tuning-no-augments.py
+* Step 6: python3 merge_lora.py --base_model_path='output/pretrained_from_scratch' --lora_path=output/ttft-task1-sample1 --output_path=output/merged_task1_sample1
 * for the inference steps, use the script: ttft/inference-no-augments.py
   
 
