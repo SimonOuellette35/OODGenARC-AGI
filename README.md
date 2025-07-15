@@ -50,13 +50,16 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
 ### Initial setup
 1. Clone the following repo: https://github.com/ironbar/arc24
-2. Generate the train/val/test split for the OOD tasks in the following way: go to OODGenARC-AGI repo folder, and do python prep_fine-tuning.py ood_TTT_data1.json
-3. Repeat the above for the 7 other task files: ood_TTT_data2/3/4/5/6/7.json.
-4. Move the OOD_TTT_data*.json files to the arc24/scripts folder
-5. From OODGenARC-AGI repo, run: python generate_TTT_data.py (to generate fine-tuning data for the TTFT model)
-6. Move the generated training_TTT.json and validation_TTT.json files over to arc24/scripts
-7. Under arc24/ run pip install -r requirements.txt
-8. Some issues I faced:
+2. Generate the train/val/test split for the OOD tasks in the following way: go to OODGenARC-AGI repo folder, and do:
+
+     python prep_fine-tuning.py ood_TTT_data1.json
+   
+4. Repeat the above for the 6 other task files: ood_TTT_data2/3/4/5/6/7.json.
+5. Move the OOD_TTT_data*.json files to the arc24/scripts folder
+6. From OODGenARC-AGI repo, run: python generate_TTT_data.py (to generate fine-tuning data for the TTFT model)
+7. Move the generated training_TTT.json and validation_TTT.json files over to arc24/scripts
+8. Under arc24/ run pip install -r requirements.txt
+9. Some issues I faced:
    
    a) had to install: pip install torch==2.5.0 transformers==4.52.1
    
@@ -66,7 +69,7 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
    d) fine-tuning.py: had to remove the dispatch_batches argument at line 738
    
-9. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
+10. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
 
 ### LLM+TTFT results
 1. in fine-tuning.py set the following parameter values:
