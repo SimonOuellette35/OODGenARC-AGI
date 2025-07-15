@@ -79,8 +79,11 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
         tokenizer.chat_template = reference_tokenizer.chat_template
 
     after tokenizer = AutoTokenizer.from_pretrained(cfg.model_path) (line 101)
+
 ```
-    g) inference.py: had to add:
+
+   g) inference.py: had to add:
+    
 ```
     # Cleanup GPU memory - handle different vllm versions
     try:
