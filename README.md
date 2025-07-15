@@ -68,7 +68,9 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 1. in fine-tuning.py set the following parameter values:
 
     train_datasets: List[List[str]] = field(default_factory=lambda: [['training_TTT.json', 'output-from-examples-v0']])
+
     val_dataset: List[str] = field(default_factory=lambda: ['validation_TTT.json', 'output-from-examples-v0'])
+
     output_dir: str = './output/'
 
 3. python fine-tuning.py to pretrain on the data
