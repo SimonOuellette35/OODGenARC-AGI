@@ -50,11 +50,13 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
 ### Initial setup
 1. Clone the following repo: https://github.com/ironbar/arc24
-2. Move the OOD_TTT_data*.json files to the arc24/scripts folder
-3. From OODGenARC-AGI repo, run: python generate_TTT_data.py (to generate fine-tuning data for the TTFT model)
-4. Move the generated training_TTT.json and validation_TTT.json files over to arc24/scripts
-5. Under arc24/ run pip install -r requirements.txt
-6. Some issues I faced:
+2. Generate the train/val/test split for the OOD tasks in the following way: go to OODGenARC-AGI repo folder, and do python prep_fine-tuning.py ood_TTT_data1.json
+3. Repeat the above for the 7 other task files: ood_TTT_data2/3/4/5/6/7.json.
+4. Move the OOD_TTT_data*.json files to the arc24/scripts folder
+5. From OODGenARC-AGI repo, run: python generate_TTT_data.py (to generate fine-tuning data for the TTFT model)
+6. Move the generated training_TTT.json and validation_TTT.json files over to arc24/scripts
+7. Under arc24/ run pip install -r requirements.txt
+8. Some issues I faced:
    
    a) had to install: pip install torch==2.5.0 transformers==4.52.1
    
@@ -64,7 +66,7 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
    d) fine-tuning.py: had to remove the dispatch_batches argument at line 738
    
-8. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
+9. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
 
 ### LLM+TTFT results
 1. in fine-tuning.py set the following parameter values:
@@ -78,9 +80,18 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
     n_gpus: int = 1    # if using RunPod A40 with 1 GPU like I was
    
 3. python fine-tuning.py to pretrain on the data, let it run until convergence.
-4. Use fine-tuning-ttft.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
-5. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
-6. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
+4. This will have created folders checkpoint-* under ./output/. Use the last one. In what follows, we use checkpoint-5000 as an example.
+5. Now change the following fine-tuning.py parameter values:
+
+    adapter_path: Optional[str] = 'output/checkpoint-5000'
+   
+    train_datasets: List[List[str]] = field(default_factory=lambda: [['ood_TTT_data1-00000000-train.json', 'output-from-examples-v0']])
+   
+    val_dataset: List[str] = field(default_factory=lambda: ['ood_TTT_data7-00000009-val.json', 'output-from-examples-v0'])
+   
+5. Use fine-tuning-ttft.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
+6. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
+7. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
 
 ### LLM-no-TTFT results
 1. python fine-tuning.py to pretrain on the data
