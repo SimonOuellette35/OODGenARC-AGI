@@ -80,7 +80,17 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
     after tokenizer = AutoTokenizer.from_pretrained(cfg.model_path) (line 101)
 ```
+    g) inference.py: had to add:
+```
+    # Cleanup GPU memory - handle different vllm versions
+    try:
+        if hasattr(llm.llm_engine, 'model_executor'):
+            del llm.llm_engine.model_executor
+    except AttributeError:
+        pass
 
+    instead of del llm.llm_engine.model_executor around line 128
+```
 9. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
 
 ### LLM+TTFT results
