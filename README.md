@@ -68,8 +68,10 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
    c) when running inference.py I had a weird exception that I resolved by doing: pip install --upgrade vllm
 
    d) fine-tuning.py: had to remove the dispatch_batches argument at line 738
+
+   e) inference.py: had to comment out tensor_parallel_size=tensor_parallel_size on line 91 since I'm using only 1 GPU
    
-10. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
+11. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
 
 ### LLM+TTFT results
 1. in fine-tuning.py set the following parameter values:
