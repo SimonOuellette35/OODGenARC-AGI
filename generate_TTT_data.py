@@ -1,7 +1,6 @@
 import json
 from tqdm import tqdm
-#from datasets.toy_data_generator import generate_data
-from datasets.data_generator import generate_data
+from datasets.toy_data_generator import generate_data
 from model.transformer_model import StandardTransformerModel
 import ARC_gym.utils.tokenization as tok
 import numpy as np
@@ -100,10 +99,10 @@ def to_python_type(obj):
         return str(obj)  # fallback: convert to string
 
 # Save training data to JSON file
-with open("training_beta_TTT.json", "w") as f:
+with open("training_TTT.json", "w") as f:
     json.dump(to_python_type(training_data), f)
 
-print("Training data saved to training.json")
+print("Training data saved to training_TTT.json")
 
 # Generate validation data
 print(f"Generating {valN} validation samples...")
@@ -142,7 +141,7 @@ for i in range(valN):
     validation_data[key] = task_example
 
 # Save validation data to JSON file
-with open("validation_beta_TTT.json", "w") as f:
+with open("validation_TTT.json", "w") as f:
     json.dump(to_python_type(validation_data), f)
 
-print("Validation data saved to validation.json")
+print("Validation data saved to validation_TTT.json")
