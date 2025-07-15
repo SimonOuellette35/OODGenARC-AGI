@@ -177,6 +177,7 @@ At step 4, test-time fine-tuning is done from the fully trained local model, rat
 
 Starting from the TTFT+augments setup, we must create modified versions of the fine-tuning.py and inference.py files to disable geometric augments. For this you can use the modified scripts found in this repo under the ttft/ folder. Move them to the arc24/scripts folder. Replace data_augmentation.py under arc24/scripts/arc24 with the version in ttft/arc24.
 
+See the full list of steps in LLM+TTFT, but replace with the following:
 * for Steps 1 and 2 (pretraining from scratch without augments on our own training data), use: ttft/fine-tuning-pretraining-from-scratch.py
 * for the TTFT steps, fine-tune using the script: ttft/fine-tuning-no-augments.py
 * for the inference steps, use the script: ttft/inference-no-augments.py
