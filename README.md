@@ -55,9 +55,13 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 4. Move the generated training_TTT.json and validation_TTT.json files over to arc24/scripts
 5. Under arc24/ run pip install -r requirements.txt
 6. Some issues I faced:
+   
    a) had to install: pip install torch==2.5.0 transformers==4.52.1
+   
    b) had to install: pip install vllm
+   
    c) when running inference.py I had a weird exception that I resolved by doing: pip install --upgrade vllm
+   
 7. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
 
 ### LLM+TTFT results
