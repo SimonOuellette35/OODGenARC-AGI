@@ -73,6 +73,8 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
     output_dir: str = './output/'
 
+    n_gpus: int = 1    # if using RunPod A40 with 1 GPU like I was
+   
 3. python fine-tuning.py to pretrain on the data
 4. Use fine-tuning-ttft.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
 5. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
