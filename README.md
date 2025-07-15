@@ -135,7 +135,8 @@ Similar steps to the above, except:
 
 ### TTFT+augments results
 Similar steps to LLM+TTFT, except:
-1. to pretrain the model on our data from scratch we used a modified fine-tuning.py:
+
+Steps 1 and 2, to pretrain the model on our data from scratch we used a modified fine-tuning.py:
    
 ```
 Instead of (line 384):
@@ -164,7 +165,14 @@ and we do not use LoRA for the training:
     use_dora = False,
 
 ```
-   
+
+At step 4, test-time fine-tuning is done from the fully trained local model, rather than the Qwen online model + the pretraining LoRA adapter, so you can use the normal fine-tuning.py file but set the following parameter values:
+
+```
+    model_path: str = 'models/pretrained_from_scratch'
+    adapter_path: Optional[str] = None
+```
+
 ### TTFT-no-augments results (the main TTFT result)
 1. python fine-tuning-ood.py to pretrain on the data
 2. Use fine-tuning-ttft-no-augments.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
