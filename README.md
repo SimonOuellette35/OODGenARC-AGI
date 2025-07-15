@@ -83,10 +83,10 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
     n_gpus: int = 1    # if using RunPod A40 with 1 GPU like I was
    
 2. python fine-tuning.py to pretrain on the data, let it run until convergence.
-3. This will have created folders checkpoint-* under ./output/. Use the last one. In what follows, we use checkpoint-5000 as an example.
+3. This will have created folders checkpoint-* under ./output/. Use the last one, rename it to pretrained_model so it doesn't clash with other checkpoint folders from future fine-tuning runs. You can delete the previous checkpoint folders.
 4. Now change the following fine-tuning.py parameter values:
 
-    adapter_path: Optional[str] = 'output/checkpoint-5000'
+    adapter_path: Optional[str] = 'output/pretrained_model'
    
     train_datasets: List[List[str]] = field(default_factory=lambda: [['ood_TTT_data1-00000000-train.json', 'output-from-examples-v0']])
    
