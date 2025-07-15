@@ -51,13 +51,14 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 ### Initial setup
 1. Clone the following repo: https://github.com/ironbar/arc24
 2. Move the OOD_TTT_data*.json files to the arc24/scripts folder
-3. python generate_TTT_data.py (to generate fine-tuning data for the TTFT model)
-4. Under arc24/ run pip install -r requirements.txt
-5. Some issues I faced:
+3. From OODGenARC-AGI repo, run: python generate_TTT_data.py (to generate fine-tuning data for the TTFT model)
+4. Move the generated training_TTT.json and validation_TTT.json files over to arc24/scripts
+5. Under arc24/ run pip install -r requirements.txt
+6. Some issues I faced:
    a) had to install: pip install torch==2.5.0 transformers==4.52.1
    b) had to install: pip install vllm
    c) when running inference.py I had a weird exception that I resolved by doing: pip install --upgrade vllm
-6. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
+7. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
 
 ### LLM+TTFT results
 1. python fine-tuning.py to pretrain on the data
