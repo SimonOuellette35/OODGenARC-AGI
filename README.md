@@ -91,9 +91,11 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
     train_datasets: List[List[str]] = field(default_factory=lambda: [['ood_TTT_data1-00000000-train.json', 'output-from-examples-v0']])
    
     val_dataset: List[str] = field(default_factory=lambda: ['ood_TTT_data1-00000009-val.json', 'output-from-examples-v0'])
+
+    eval_steps: int = 10
    
-5. Run this modified fine-tuning.py to produce the task-specific lora adapters. You will have to repeat this for every task instance file! Though you'll probably want to proceed in batches to not run out of disk space from the generated LoRA adapters. To respect the 3-minute time budget, I suggest running this step for no more than 2 minutes 30 seconds each time.
-7. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
+6. Run this modified fine-tuning.py to produce the task-specific lora adapters. You will have to repeat this for every task instance file! Though you'll probably want to proceed in batches to not run out of disk space from the generated LoRA adapters. To respect the 3-minute time budget, I suggest running this step for no more than 2 minutes 30 seconds each time.
+7. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=output/ttft-task1-sample1 --output_path=output/merged_task1_sample1
 8. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
 
 ### LLM-no-TTFT results
