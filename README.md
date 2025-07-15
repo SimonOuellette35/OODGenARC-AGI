@@ -134,11 +134,37 @@ Similar steps to the above, except:
 - step 7 becomes: python3 inference.py --model_path output/merged_pretrained_model --dataset ./ood_TTT_data1-00000000-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
 
 ### TTFT+augments results
-1. python fine-tuning-no-weights.py to pretrain on the data
-2. Use fine-tuning-ttft.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
-3. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
-4. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
+Similar steps to LLM+TTFT, except:
+1. to pretrain the model on our data from scratch we used a modified fine-tuning.py:
+   
+```
+Instead of (line 384):
 
+    model = AutoModelForCausalLM.from_pretrained(
+         model_path,
+         quantization_config=bnb_config,
+         device_map=get_device_map(n_gpus, model_path, device_map),
+         # max_memory={0: '9GB', 1: '8GB'},
+         trust_remote_code=True,
+         torch_dtype=get_torch_dtype(torch_dtype), #bfloat16 is 4 times slower on Kaggle than float16, on my computer they are the same speed
+         attn_implementation=get_flash_attention_implementation(),
+         )
+
+we use:
+    config = AutoConfig.from_pretrained(model_path, trust_remote_code=True)
+    model = AutoModelForCausalLM.from_config(config)
+
+```
+
+and we do not use LoRA for the training:
+
+```
+    use_lora: bool = False
+    use_rslora = False,
+    use_dora = False,
+
+```
+   
 ### TTFT-no-augments results (the main TTFT result)
 1. python fine-tuning-ood.py to pretrain on the data
 2. Use fine-tuning-ttft-no-augments.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
