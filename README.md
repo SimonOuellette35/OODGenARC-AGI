@@ -65,10 +65,16 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 7. Copy the modified scripts from this repo's ttft/ folder to the arc24/scripts folder above.
 
 ### LLM+TTFT results
-1. python fine-tuning.py to pretrain on the data
-2. Use fine-tuning-ttft.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
-3. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
-4. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
+1. in fine-tuning.py set the following parameter values:
+
+    train_datasets: List[List[str]] = field(default_factory=lambda: [['training_TTT.json', 'output-from-examples-v0']])
+    val_dataset: List[str] = field(default_factory=lambda: ['validation_TTT.json', 'output-from-examples-v0'])
+    output_dir: str = './output/'
+
+3. python fine-tuning.py to pretrain on the data
+4. Use fine-tuning-ttft.py (with adapter_path=output of previous operation) to produce the task-specific lora adapter. (set the config in the file)
+5. python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=models/ttft-task6-sample1 --output_path=output/merged_task1_sample1
+6. python3 inference.py --model_path output/merged_task1_sample1 --dataset ./ood_TTT_data1-sample1-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
 
 ### LLM-no-TTFT results
 1. python fine-tuning.py to pretrain on the data
