@@ -196,4 +196,4 @@ Name it: model_full.pth
 * move these training.json and validation.json files to the GridCoder2024 repo folder.
 * inside the GridCoder2024 repo folder: python train_gridcoder2_format.py
 * run: python test_gridcoder.py --task alpha_POC --dataset ood_data1.json
-  
+* repeat the above line for all tasks from ood_data1 to ood_data7
