@@ -185,5 +185,13 @@ See the full list of steps in LLM+TTFT, but replace with the following:
 * for the TTFT steps, fine-tune using the script: ttft/fine-tuning-no-augments.py
 * Step 6: python3 merge_lora.py --base_model_path='output/pretrained_from_scratch' --lora_path=output/ttft-task1-sample1 --output_path=output/merged_task1_sample1
 * for the inference steps, use the script: ttft/inference-no-augments.py
-  
 
+## GridCoder 1 results
+
+* clone https://github.com/simonouellette35/GridCoder2024
+* git checkout experiment/gridcoder2_paper
+* in OODGenARC-AGI/generate_toy_data.py, set the VERSION constant to 1
+* generate training data using: python generate_toy_data.py
+* move these training.json and validation.json files to the GridCoder2024 repo folder.
+* inside the GridCoder2024 repo folder: python train_gridcoder2_format.py
+  
