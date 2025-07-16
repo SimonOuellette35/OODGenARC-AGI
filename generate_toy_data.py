@@ -17,7 +17,7 @@ input_sequences, programs = generate_data(model, num_samples=trainN, version=VER
 training_data = []
 for i in range(trainN):
     sample = {
-        "input_sequence": input_sequences[i],
+        "input_sequence": input_sequences[i].tolist(),
         "prog": programs[i]
     }
     training_data.append(sample)
@@ -36,7 +36,7 @@ input_sequences, programs = generate_data(model, num_samples=valN)
 validation_data = []
 for i in range(valN):
     sample = {
-        "input_sequence": input_sequences[i],
+        "input_sequence": input_sequences[i].tolist(),
         "prog": programs[i]
     }
     validation_data.append(sample)
