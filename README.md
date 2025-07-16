@@ -191,11 +191,17 @@ Instead of training, you can get the pretrained weights from: https://drive.goog
 
 Name it: model_full.pth
 
+Initial setup:
+
 * clone https://github.com/simonouellette35/GridCoder2024
 * git checkout experiment/gridcoder2_paper
+  
+To train from scratch:
 * in OODGenARC-AGI/generate_toy_data.py, set the VERSION constant to 1
 * generate training data using: python generate_toy_data.py
 * move these training.json and validation.json files to the GridCoder2024 repo folder.
 * inside the GridCoder2024 repo folder: python train_gridcoder2_format.py
+
+To evaluate GridCoder 1 on OOD tasks:
 * run: python test_gridcoder.py --task alpha_POC --dataset ood_data1.json
-* repeat the above line for all tasks from ood_data1 to ood_data7
+* repeat the above line for all tasks from ood_data1 to ood_data7. These are the ood_data files found in this OODGenARC-AGI repo.
