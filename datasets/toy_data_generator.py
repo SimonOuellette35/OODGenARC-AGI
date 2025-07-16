@@ -215,7 +215,7 @@ def get_ood_task(grid, task_class_idx):
 
     return result_grid, []
 
-def generate_data(model, ood=False, specified_task=None, num_samples=1000, k=1):
+def generate_data(model, ood=False, specified_task=None, num_samples=1000, k=1, version=2):
     if ood:
         NUM_TASKS = 7
     else:
@@ -256,8 +256,13 @@ def generate_data(model, ood=False, specified_task=None, num_samples=1000, k=1):
             if ood:
                 result_grid, prog = get_ood_task(grid, task_class_idx)
             else:
-                result_grid, prog = get_training_task(grid, task_class_idx, DSL_size)
-                #result_grid, prog = get_gridcoderv1_task(grid, task_class_idx)
+                if version == 2:
+                    result_grid, prog = get_training_task(grid, task_class_idx, DSL_size)
+                elif version == 1:
+                    result_grid, prog = get_gridcoderv1_task(grid, task_class_idx)
+                else:
+                    print("==> ERROR: unknown gridcoder dataset version.")
+                    exit(0)
                 
             if result_grid is None:
                 continue

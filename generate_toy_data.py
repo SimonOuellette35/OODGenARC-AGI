@@ -6,11 +6,12 @@ from model.transformer_model import StandardTransformerModel
 trainN = 200000
 valN = 1000
 model = StandardTransformerModel.instantiate_from_config_file('gridcoder_cfg.json')
+VERSION = 2
 
 
 # Generate training data
 print(f"Generating {trainN} training samples...")
-input_sequences, programs = generate_data(model, num_samples=trainN)
+input_sequences, programs = generate_data(model, num_samples=trainN, version=VERSION)
 
 # Convert to list of dictionaries for JSON serialization
 training_data = []
