@@ -30,7 +30,7 @@ print("Training data saved to training.json")
 
 # Generate validation data
 print(f"Generating {valN} validation samples...")
-input_sequences, programs = generate_data(model, num_samples=valN)
+input_sequences, programs = generate_data(model, num_samples=valN, version=VERSION)
 
 # Convert to list of dictionaries for JSON serialization
 validation_data = []
