@@ -188,7 +188,9 @@ See the full list of steps in LLM+TTFT, but replace with the following:
 
 ## GridCoder 1 results
 Instead of training, you can get the pretrained weights from: https://drive.google.com/file/d/1feeuRxxTwDCfy5hu2Y1-TZGsH4vgpAgu/view?usp=sharing
+
 Name it: model_full.pth
+
 * clone https://github.com/simonouellette35/GridCoder2024
 * git checkout experiment/gridcoder2_paper
 * in OODGenARC-AGI/generate_toy_data.py, set the VERSION constant to 1
