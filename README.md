@@ -187,11 +187,13 @@ See the full list of steps in LLM+TTFT, but replace with the following:
 * for the inference steps, use the script: ttft/inference-no-augments.py
 
 ## GridCoder 1 results
-
+Instead of training, you can get the pretrained weights from: https://drive.google.com/file/d/1feeuRxxTwDCfy5hu2Y1-TZGsH4vgpAgu/view?usp=sharing
+Name it: model_full.pth
 * clone https://github.com/simonouellette35/GridCoder2024
 * git checkout experiment/gridcoder2_paper
 * in OODGenARC-AGI/generate_toy_data.py, set the VERSION constant to 1
 * generate training data using: python generate_toy_data.py
 * move these training.json and validation.json files to the GridCoder2024 repo folder.
 * inside the GridCoder2024 repo folder: python train_gridcoder2_format.py
+* run: python test_gridcoder.py --task alpha_POC --dataset ood_data1.json
   
