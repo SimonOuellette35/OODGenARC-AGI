@@ -288,29 +288,32 @@ def generate_data(model, ood=False, specified_task=None, num_samples=1000, k=1, 
         if k > 1:
             combined_input.append(task_input_sequences)
 
-        # Create label with SOS token
-        label_seq = ProgUtils.convert_prog_to_token_seq(prog, DSL)
+        if version == 2:
+            # Create label with SOS token
+            label_seq = ProgUtils.convert_prog_to_token_seq(prog, DSL)
 
-        # Pad the sequence up to max_instr_seq_length with EOS_token
-        for idx, instr_step in enumerate(label_seq):
-            if len(instr_step) < model.max_target_seq_length:
-                padding = [ProgUtils.EOS_TOKEN] * (model.max_target_seq_length - len(instr_step))
-                label_seq[idx] = instr_step + padding
-            elif len(label_seq) > model.max_target_seq_length:
-                print("==> ERROR: the training ground truth instruction step is longer than max_instr_seq_length!")
-                exit(-1)
+            # Pad the sequence up to max_instr_seq_length with EOS_token
+            for idx, instr_step in enumerate(label_seq):
+                if len(instr_step) < model.max_target_seq_length:
+                    padding = [ProgUtils.EOS_TOKEN] * (model.max_target_seq_length - len(instr_step))
+                    label_seq[idx] = instr_step + padding
+                elif len(label_seq) > model.max_target_seq_length:
+                    print("==> ERROR: the training ground truth instruction step is longer than max_instr_seq_length!")
+                    exit(-1)
 
-        # Ensure label_seq has exactly model.max_instr_steps entries
-        if len(label_seq) < model.max_instr_steps:
-            # Calculate how many additional sequences of max_instr_seq_length EOS_TOKEN we need
-            num_additional_seqs = model.max_instr_steps - len(label_seq)
-            # Create and add the additional sequences
-            for _ in range(num_additional_seqs):
-                eos_sequence = [ProgUtils.EOS_TOKEN] * model.max_target_seq_length
-                label_seq.append(eos_sequence)
+            # Ensure label_seq has exactly model.max_instr_steps entries
+            if len(label_seq) < model.max_instr_steps:
+                # Calculate how many additional sequences of max_instr_seq_length EOS_TOKEN we need
+                num_additional_seqs = model.max_instr_steps - len(label_seq)
+                # Create and add the additional sequences
+                for _ in range(num_additional_seqs):
+                    eos_sequence = [ProgUtils.EOS_TOKEN] * model.max_target_seq_length
+                    label_seq.append(eos_sequence)
 
-        programs.append(label_seq)
-
+            programs.append(label_seq)
+        else:
+            programs.append(prog)
+            
         i += 1
 
     return combined_input, programs
