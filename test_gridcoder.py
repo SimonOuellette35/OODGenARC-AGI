@@ -114,6 +114,9 @@ def display_program_sequence(program):
             sequence.append(instruction)
         current = current.parent_node
     
+    if current is None:
+        is_arg_max = False
+
     # Reverse the sequence since we built it from leaf to root
     sequence.reverse()
     
