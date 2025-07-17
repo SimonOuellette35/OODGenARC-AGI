@@ -102,11 +102,14 @@ def display_program_sequence(program):
     # Start from the current node
     current = program
     sequence = []
-    
+
+    is_arg_max = True
     # Walk up the tree until we reach the root
     while current is not None:
         if current.parent_node is not None:
             # Get the instruction sequence at this step
+            if current.instruction_idx != 0:
+                is_arg_max = False
             instruction = current.parent_node.instruction_seqs[current.instruction_idx]
             sequence.append(instruction)
         current = current.parent_node
@@ -119,6 +122,8 @@ def display_program_sequence(program):
         intermediate_seq = ProgUtils.convert_token_seq_to_token_tuple(instruction, DSL)
         handwritten_seq = ProgUtils.convert_token_tuple_to_str(intermediate_seq, DSL)
         print(f"Step {i}: {handwritten_seq}")
+
+    return is_arg_max
 
 def process_task(model, X, Y):
     '''
@@ -143,11 +148,12 @@ def process_task(model, X, Y):
     #     traceback.print_exc()
     #     return False, None
 
-    display_program_sequence(program)    
+    nn_only_success = display_program_sequence(program)    
     
-    return success, program
+    return success, nn_only_success, program
 
 success_rate = 0
+nn_only_success_rate = 0
 task_count = 0
 for task_idx, eval_task in enumerate(eval_loader):
 
@@ -181,11 +187,15 @@ for task_idx, eval_task in enumerate(eval_loader):
 
     grids = split_XY(eval_task[0][0].cpu().data.numpy())
     
-    success, _ = process_task(model, grids[0], grids[1])
+    success, nn_only_success, _ = process_task(model, grids[0], grids[1])
 
     if success:
         success_rate += 1
 
+    if nn_only_success:
+        nn_only_success_rate += 1
+    
     task_count += 1
     
 print("==> Success rate = ", float(success_rate)/task_count)
+print("==> Ablation (NN Only) success rate = ", float(nn_only_success_rate)/task_count)
