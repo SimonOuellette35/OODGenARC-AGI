@@ -48,7 +48,7 @@ Each live above gives the success rate for each OOD Task from 1 to 7 inclusively
 
 Expected GridCoder 2 detailed results:
 
-![Alt text](docs/gridcoder2_detailed_results.png)
+![Gridcoder 2 results](docs/gridcoder2_detailed_results.png)
 
 ## TTFT results
 
@@ -132,12 +132,21 @@ Instead of going through steps 1 and 2, you can download the pretrained model fr
 
 Note: Chances are you'll want to find a way to automate this entire process, but I didn't.
 
+Expected LLM+TTFT detailed results:
+
+![LLM+TTFT results](docs/LLM+TTFT_detailed_results.png)
+
+
 ### LLM-no-TTFT results
 Instead of going through steps 1 and 2, you can download the pretrained model from here: https://drive.google.com/file/d/1e-b1rYsy97GTWtJ0wbA3uDV8Qqtu339L/view?usp=sharing
 Similar steps to the above, except:
 - skip steps 4 and 5, we don't fine-tune on tasks
 - step 6 becomes: python3 merge_lora.py --base_model_path='Qwen/Qwen2-0.5B-Instruct' --lora_path=output/pretrained_model --output_path=output/merged_pretrained_model
 - step 7 becomes: python3 inference.py --model_path output/merged_pretrained_model --dataset ./ood_TTT_data1-00000000-test.json --output_filepath ./ood_TTT_data1-sample1-solution.json --prompt_version='output-from-examples-v0'
+
+Expected LLM-no-TTFT detailed results:
+
+![LLM-no-TTFT results](docs/LLM-no-TTFT_detailed_results.png)
 
 ### TTFT+augments results
 Instead of going through steps 1 and 2, you can download the pretrained model from here: https://drive.google.com/file/d/1TBGFiuZmZDEbg-9AFuhvYPN1Tizp9Az_/view?usp=sharing
@@ -180,6 +189,10 @@ At step 4, test-time fine-tuning is done from the fully trained local model, rat
     adapter_path: Optional[str] = None
 ```
 
+Expected TTFT+augments detailed results:
+
+![TTFT+augments results](docs/TTFT+augments_detailed_results.png)
+
 ### TTFT-no-augments results (the main TTFT result)
 Instead of going through steps 1 and 2, you can download the pretrained model from here: https://drive.google.com/file/d/1Bz9FNc6S6yiVKETMn-1ozRR1I_35d8FM/view?usp=sharing
 Starting from the TTFT+augments setup, we must create modified versions of the fine-tuning.py and inference.py files to disable geometric augments. For this you can use the modified scripts found in this repo under the ttft/ folder. Move them to the arc24/scripts folder. Replace data_augmentation.py under arc24/scripts/arc24 with the version in ttft/arc24.
@@ -189,6 +202,10 @@ See the full list of steps in LLM+TTFT, but replace with the following:
 * for the TTFT steps, fine-tune using the script: ttft/fine-tuning-no-augments.py
 * Step 6: python3 merge_lora.py --base_model_path='output/pretrained_from_scratch' --lora_path=output/ttft-task1-sample1 --output_path=output/merged_task1_sample1
 * for the inference steps, use the script: ttft/inference-no-augments.py
+
+Expected TTFT-no-augmnets detailed results:
+
+![TTFT-no-augments results](docs/TTFT-no-augments_detailed_results.png)
 
 ## GridCoder 1 results
 Instead of training, you can get the pretrained weights from: https://drive.google.com/file/d/1feeuRxxTwDCfy5hu2Y1-TZGsH4vgpAgu/view?usp=sharing
