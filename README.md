@@ -46,6 +46,10 @@ You should name the checkpoint file: gridcoder2.pth
    
 Each live above gives the success rate for each OOD Task from 1 to 7 inclusively. It also displays the results for the corresponding search ablation study (NN Only model).
 
+Expected GridCoder 2 detailed results:
+
+![Alt text](docs/gridcoder2_detailed_results.png)
+
 ## TTFT results
 
 ### Initial setup
