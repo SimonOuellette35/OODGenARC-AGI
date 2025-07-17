@@ -44,7 +44,7 @@ You should name the checkpoint file: gridcoder2.pth
     python test_gridcoder.py --dataset ood_data6.json
     python test_gridcoder.py --dataset ood_data7.json
    
-Each live above gives the success rate for each OOD Task from 1 to 7 inclusively.
+Each live above gives the success rate for each OOD Task from 1 to 7 inclusively. It also displays the results for the corresponding search ablation study (NN Only model).
 
 ## TTFT results
 
