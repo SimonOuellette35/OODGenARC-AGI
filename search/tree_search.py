@@ -8,11 +8,22 @@ import AmotizedDSL.DSL as DSL
 from AmotizedDSL.prog_utils import ProgUtils
 import AmotizedDSL.program_interpreter as pi
 import search.tree_search_common as ts
+import random
 
 # Suppress scientific notation in numpy arrays
 np.set_printoptions(suppress=True)
 DET_SEED = 12345
 np.random.seed(DET_SEED)
+
+torch.manual_seed(DET_SEED)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(DET_SEED)
+    torch.cuda.manual_seed_all(DET_SEED)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+
+random.seed(DET_SEED)
+
 DSL_size = len(DSL.semantics) + ProgUtils.NUM_SPECIAL_TOKENS
 MEMORY_LIMIT = 5        # was: 5
 VERBOSE = False

@@ -42,15 +42,7 @@ print("DSL_size = ", DSL_size)
 model = StandardTransformerModel.instantiate_from_config_file('gridcoder_cfg.json')
 device = "cuda"
 
-# ========================================================= Toy problem data generation =====================================================
-
-# We generate 3 types of input grid to output grid transformations:
-# 1. vmirror + change non-black pixels to yellow
-# 2. hmirror + change non-black pixels to yellow
-# 3. shift pixels to the right
-
-# The goal of this datasets is that the model must learn to classify which type of operation was applied between
-# the two input grids.
+# ========================================================= Loading Training Data =====================================================
 
 def load_data(filename='training.json', max_samples=None):
     X_train = []
